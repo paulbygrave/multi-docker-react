@@ -1,0 +1,24 @@
+sudo: required
+services:
+  - docker
+
+before_install:
+  - docker build -t paulbygrave/client-test -f ./client/Dockerfile.dev ./client
+
+script:
+  - docker run -e CI=true paulbygrave/client-test npm run test -- --coverage
+
+after_success:
+  # Create the Production images
+  - docker build -t paulbygrave/multi-docker-react-client ./client
+  - docker build -t paulbygrave/multi-docker-react-nginx ./nginx
+  - docker build -t paulbygrave/multi-docker-react-server ./server
+  - docker build -t paulbygrave/multi-docker-react-worker ./worker
+  # Login to Docker CLI
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  # Take Production images and push to Docker Hub
+  - docker push paulbygrave/multi-docker-react-client
+  - docker push paulbygrave/multi-docker-react-nginx
+  - docker push paulbygrave/multi-docker-react-server
+  - docker push paulbygrave/multi-docker-react-worker
+
