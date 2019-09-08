@@ -1,0 +1,36 @@
+{
+  "AWSEBDockerrunVersion": 2,
+  "containerDefinitions": [
+    {
+      "name": "client",
+      "image": "paulbygrave/multi-docker-react-client",
+      "hostname" : "client",
+      "essential": false
+    },
+    {
+      "name": "server",
+      "image": "paulbygrave/multi-docker-react-server",
+      "hostname" : "api",
+      "essential": false
+    },
+    {
+      "name": "worker",
+      "image": "paulbygrave/multi-docker-react-worker",
+      "hostname" : "worker",
+      "essential": false
+    },
+    {
+      "name": "nginx",
+      "image": "paulbygrave/multi-docker-react-nginx",
+      "hostname" : "nginx",
+      "essential": true,
+      "portMappings": [
+	{
+	  "hostPort": 80,
+	  "containerPort": 80
+	}
+      ],
+      "links": ["client", "server"]
+    }
+  ]
+}
